@@ -47,3 +47,42 @@ prediksiNasabah = modelnya.predict(Soal_ujian)
 hasilPrediksi = (prediksiNasabah > 0.5)
 cm = confusion_matrix(Jawaban_ujian, hasilPrediksi)
 print('Nilai Akurasi = ', (cm[0,0]+cm[1,1])/2000)
+
+""" Prediksi tunggal terhadap serorang nasabah """
+
+""" 1: Male, 0: Female """
+""" 2: New Delhi, 1: Mumbai, 0: Agra"""
+
+"""
+Geography: Mumbai
+Credit Score: 645
+Gender: Male
+Age: 40
+Tenure: 3
+Balance: 6000
+Number of Product: 2
+Has Credit Card: Yes
+Is Active Member: Yes
+Estimated Salary: 50000
+"""
+
+import numpy as n
+nasabahBaru = ss.transform(n.array([[1,0,   # Mumbai
+                                     645,   # Credit Score
+                                     1,     # Male
+                                     40,    # Age
+                                     3,     # Tenure
+                                     6000,  # Balance
+                                     2,     # Number of Product
+                                     1,     # Has Credit Card: Yes
+                                     1,     # Is Active Member: Yes
+                                     50000  # Estimated Salary
+                                     ]]))
+
+hasilPrediksi = modelnya.predict(nasabahBaru)
+prediksinya = (hasilPrediksi > 0.5)
+
+if (prediksinya):
+    print("Nasabah meninggalkan Bank")
+else:
+    print("Nasbah akan tetap di Bank")
