@@ -1,55 +1,49 @@
-# -*- coding: utf-8 -*-
 """
 Created on Sat Dec  5 19:07:26 2020
 
 @author: yudha
 """
 
-import numpy as n
-import matplotlib.pyplot as p
+""" Import Dataset nasabah bank """
 import pandas as pd
-
 dataset = pd.read_csv('bank_customers.csv')
+X = dataset.iloc[:, 3:13 ].values   # Pilah Fitur yang penting (Dari CreditScore - EstimatedSalary)
+y = dataset.iloc[:, 13 ].values     # Pilah Jawaban (Exited)
 
-X = dataset.iloc[:, 3:13 ].values
-y = dataset.iloc[:, 13 ].values
-
-from sklearn.preprocessing import LabelEncoder as le
+""" Data preprocessing """
+from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder as ohe
 from sklearn.compose import ColumnTransformer as ct
-Ubah_Geografi = le()
-X[:, 1] = Ubah_Geografi.fit_transform(X[:, 1])
-Ubah_Gender = le()
-X[:, 2] = Ubah_Gender.fit_transform(X[:, 2])
-Penyetaraan = ct([('Geography', ohe(), [1])], remainder="passthrough")
-X = Penyetaraan.fit_transform(X[:,0:])
-X = X[:, 1:]
+le = LabelEncoder()
+X[:, 1] = le.fit_transform(X[:, 1]) # Ubah nama negara menjadi numerik
+X[:, 2] = le.fit_transform(X[:, 2]) # Ubah gender menjadi numerik
+Setarakan = ct([('Pilah Jadi 3', ohe(), [1])], remainder="passthrough")
+X = Setarakan.fit_transform(X[:,0:]) # Setarakan kategori negara
+X = X[:, 1:]  # hilangkan 1 fitur variabel sampah
 
+""" Pilah Data latihan dengan Data Ujian """
 from sklearn.model_selection import train_test_split as tts
-X_train, X_test, y_train, y_test = tts(X, y, test_size = 0.2, random_state = 0)
+Soal_latihan, Soal_ujian, Jawaban_latihan, Jawaban_ujian = tts(X, y, test_size = 0.2, random_state = 0)
 
-
+""" Standarisasi Soal latihan dan Soal Ujian """
 from sklearn.preprocessing import StandardScaler
-sc = StandardScaler()
-X_train = sc.fit_transform(X_train)
-X_test = sc.transform(X_test)
+ss = StandardScaler()
+Soal_latihan = ss.fit_transform(Soal_latihan)  # Standarisasi Soal Latihan
+Soal_ujian = ss.transform(Soal_ujian)          # Standarisasi Soal Ujian
 
-import keras
+""" Inisialisasi Arsitektur ANN (11-6-6-1) """
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense as layerHiddennya
+modelnya = Sequential()
+modelnya.add(layerHiddennya(6, activation = 'relu', input_dim = 11))
+modelnya.add(layerHiddennya(6, activation = 'relu'))
+modelnya.add(layerHiddennya(1, activation = 'sigmoid'))
+modelnya.compile(optimizer= 'adam', loss= 'binary_crossentropy', metrics = ['accuracy'])
+modelnya.fit(Soal_latihan, Jawaban_latihan, batch_size= 10, epochs = 100)
 
-classifier = Sequential()
-classifier.add(Dense(6, activation = 'relu', input_dim = 11))
-
-classifier.add(Dense(6, activation = 'relu'))
-
-classifier.add(Dense(1, activation = 'sigmoid'))
-
-classifier.compile(optimizer= 'adam', loss= 'binary_crossentropy', metrics = ['accuracy'])
-classifier.fit(X_train, y_train, batch_size= 10, epochs = 100)
-
-y_pred = classifier.predict(X_test)
-y_pred = (y_pred > 0.5)
-
+""" Evaluasi Arsitektur ANN """
 from sklearn.metrics import confusion_matrix
-cm = confusion_matrix(y_test, y_pred)
+prediksiNasabah = modelnya.predict(Soal_ujian)
+hasilPrediksi = (prediksiNasabah > 0.5)
+cm = confusion_matrix(Jawaban_ujian, hasilPrediksi)
+print('Nilai Akurasi = ', (cm[0,0]+cm[1,1])/2000)
