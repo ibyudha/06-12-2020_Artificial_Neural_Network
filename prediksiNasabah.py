@@ -1,7 +1,7 @@
 """
 Created on Sat Dec  5 19:07:26 2020
 
-@author: yudha
+@author: Gus Yudha
 """
 
 """ Import Dataset nasabah bank """
