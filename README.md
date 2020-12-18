@@ -1,10 +1,10 @@
 # 06-12-2020_Artificial_Neural_Network
 This repository is for the presentation of an artificial intelligence journal project (ARTIFICIAL INTELLIGENCE IN INDIAN BANKING SECTOR: CHALLENGES AND OPPORTUNITIES).
 
--  Ida Bagus Made Yudha Wirawan
--  Kadek Aprilia Cahyani
--  Iqlima Nur Fiqhia
--  Ketut Sri Sekarini
+-  012_Ida Bagus Made Yudha Wirawan
+-  019_Kadek Aprilia Cahyani
+-  020_Iqlima Nur Fiqhia
+-  054_Ketut Sri Sekarini
 
 
 ## Presentation Video
